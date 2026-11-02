@@ -48,7 +48,6 @@ jobs:
         run: npm run agent:test
       - name: Generate and automatically publish due posts
         id: generate
-        if: github.event_name != 'push'
         env:
           BLOG_AI_API_KEY: ${{ secrets.BLOG_AI_API_KEY }}
         run: npm run agent:once

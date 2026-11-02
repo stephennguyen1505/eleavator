@@ -29,6 +29,11 @@ function markdown(article) {
     article.sections.map(section=>`## ${section.heading}\n\n${section.paragraphs.join('\n\n')}`).join('\n\n')+
     `\n\n${article.conclusion}\n`;
 }
+async function apiError(response) {
+  let code='';
+  try {const body=await response.json();const raw=body?.error?.code;if(typeof raw==='string'&&/^[a-zA-Z0-9_-]{1,80}$/.test(raw))code=` (${raw})`;}catch {}
+  return `HTTP ${response.status}${code}`;
+}
 export async function generateArticle(config,topic,{apiKey,fetchImpl=fetch}={}) {
   if(!apiKey)throw Error('Chưa có BLOG_AI_API_KEY. Cấu hình khóa trong môi trường chạy; không nhập vào mã nguồn.');
   const response=await fetchImpl('https://api.openai.com/v1/chat/completions',{
@@ -39,7 +44,7 @@ export async function generateArticle(config,topic,{apiKey,fetchImpl=fetch}={}) 
       {role:'user',content:JSON.stringify({topic,siteName:config.siteName,audience:config.audience,language:config.language,verifiedFacts:config.verifiedFacts,rules:config.editorialRules})}
     ]})
   });
-  if(!response.ok)throw Error(`Dịch vụ AI trả về HTTP ${response.status}; không tạo bản nháp hoặc đánh dấu đã hoàn thành.`);
+  if(!response.ok)throw Error(`Dịch vụ AI trả về ${await apiError(response)}; không tạo bản nháp hoặc đánh dấu đã hoàn thành.`);
   const payload=await response.json();
   if(payload.choices?.[0]?.finish_reason!=='stop')throw Error('AI chưa hoàn thành nội dung; không lưu bài viết bị cắt.');
   return validateArticle(JSON.parse(payload.choices[0].message.content));
@@ -54,7 +59,7 @@ export async function suggestTopic(config,previous,{apiKey,fetchImpl=fetch}={}) 
       {role:'user',content:JSON.stringify({audience:config.audience,previousTopics:previous.map(p=>p.topic),rules:config.editorialRules})}
     ]})
   });
-  if(!response.ok)throw Error(`Lập chủ đề thất bại: HTTP ${response.status}`);
+  if(!response.ok)throw Error(`Lập chủ đề thất bại: ${await apiError(response)}`);
   const payload=await response.json();
   if(payload.choices?.[0]?.finish_reason!=='stop')throw Error('AI chưa hoàn thành đề xuất chủ đề.');
   const {topic}=JSON.parse(payload.choices[0].message.content);

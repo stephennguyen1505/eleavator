@@ -32,7 +32,7 @@ Chỉ `dist/` được đưa lên Pages, không có khóa, cấu hình nội b�
 
 GitHub Actions có thể chạy trễ so với cron, đặc biệt đầu giờ; đây là các giờ mục tiêu, không bảo đảm xuất bản chính xác từng phút. GitHub có thể tắt lịch của repository công khai sau 60 ngày không có hoạt động. Theo dõi tab Actions và bật lại nếu có thông báo. Phí OpenAI tính theo tài khoản của bạn; hạn mức GitHub Actions phụ thuộc loại repository/gói tài khoản.
 
-Workflow trên push chỉ build/triển khai nội dung sẵn có; không gọi AI. Lịch hoặc **Run workflow** mới gọi AI và tạo bài. Khi hết 30 chủ đề ban đầu, AI tự đề xuất tiếp. Việc kiểm tra thông tin bằng AI không thay thế dữ liệu sản phẩm đã xác minh; cấu hình `agent/config.json` có thể bổ sung thông tin thực tế.
+Workflow chạy trên push, lịch và **Run workflow** đều tạo bài còn thiếu của hôm nay rồi triển khai. Chạy thêm không tạo quá năm bài/ngày vì đã có lịch sử theo khung giờ. Sau khi thêm khóa, một lượt push có thể dùng để kiểm tra và khởi tạo bài ngay. Khi hết 30 chủ đề ban đầu, AI tự đề xuất tiếp. Việc kiểm tra thông tin bằng AI không thay thế dữ liệu sản phẩm đã xác minh; cấu hình `agent/config.json` có thể bổ sung thông tin thực tế.
 
 ## Tạm dừng
 
