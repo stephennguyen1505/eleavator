@@ -14,7 +14,7 @@
 
 ## Trạng thái kích hoạt thực tế
 
-Mã nguồn và cấu hình tự động đã được kiểm tra với API giả lập. **Chưa chạy dịch vụ hằng ngày hoặc đăng bài thật:** chưa có repository secret `BLOG_AI_API_KEY` và chưa kiểm chứng cài đặt Pages/Actions qua API. GitHub Actions sẽ thay thế máy chủ chạy thường trực. Khởi chạy khi thiếu khóa sẽ báo lỗi và thoát, không báo hoạt động giả.
+Mã nguồn và cấu hình tự động đã được kiểm tra với API giả lập. **Chưa chạy dịch vụ hằng ngày hoặc đăng bài thật:** chưa có repository secret `BLOG_AI_API_KEY`. Lần build/deploy đầu tiên trên GitHub Actions đã thành công (run 41421413784); lượt push không tạo bài AI. GitHub Actions sẽ thay thế máy chủ chạy thường trực. Khởi chạy khi thiếu khóa sẽ báo lỗi và thoát, không báo hoạt động giả.
 
 Yêu cầu khóa `BLOG_AI_API_KEY` và hướng dẫn khởi động đã lưu vào bản nháp cấu hình cloud. Đích HTTPS được bổ sung: `api.openai.com`. Người quản trị cần nhập khóa qua Environment settings, lưu và Publish môi trường để áp dụng cấu hình; thao tác này không triển khai website hay tạo dịch vụ thường trực. Không gửi khóa vào chat hoặc ghi vào repository.
 

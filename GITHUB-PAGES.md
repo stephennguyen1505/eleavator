@@ -4,10 +4,14 @@ Website: https://stephennguyen1505.github.io/eleavator/
 
 GitHub Actions chạy agent thay cho máy chủ riêng. Bài tự đăng không qua duyệt; năm mốc giờ Việt Nam là 09:00, 11:00, 15:00, 19:00 và 20:00. Lịch Actions dùng UTC tương ứng 02:00, 04:00, 08:00, 12:00 và 13:00.
 
+## Trạng thái
+
+Mã đã lên `main` ở commit `2a03acc`; lần build/deploy đầu tiên trên GitHub Actions đã báo **Success**. Lượt push này không gọi AI. Chưa sinh bài AI thật vì chưa có repository secret `BLOG_AI_API_KEY`. Chưa xác minh trực tiếp phản hồi HTTP của website từ phiên cloud do giới hạn mạng.
+
 ## Việc cần thực hiện một lần
 
 1. Mở https://github.com/stephennguyen1505/eleavator/settings/secrets/actions → **New repository secret**. Name: **BLOG_AI_API_KEY**. Secret: khóa API OpenAI có hạn mức sử dụng và quyền gọi model `gpt-4.1-mini`. Lưu bằng **Add secret**. Không dán khóa vào mã nguồn hoặc chat. Secret trong môi trường cloud không tự chuyển sang GitHub Actions: phải thêm vào repository này.
-2. Mở https://github.com/stephennguyen1505/eleavator/settings/pages → **Build and deployment → Source → GitHub Actions**. Không cần thuê hosting hay đổi tên miền. Nguồn website vẫn là nội dung repository; workflow chỉ triển khai thư mục `dist`.
+2. Lần triển khai workflow đầu tiên đã thành công: https://github.com/stephennguyen1505/eleavator/actions/runs/41421413784. Không cần thuê hosting hay đổi tên miền. Nếu sau này cấu hình Pages thay đổi và deploy lỗi, mở https://github.com/stephennguyen1505/eleavator/settings/pages → **Build and deployment → Source → GitHub Actions**. Workflow chỉ triển khai thư mục `dist`.
 3. Mở https://github.com/stephennguyen1505/eleavator/actions → chọn **Daily AI blog and GitHub Pages** → **Run workflow** → branch **main** → **Run workflow**. Nếu GitHub hỏi bật Actions cho repository, chọn bật.
 4. Đợi cả hai job **build** và **deploy** thành công. Mở https://stephennguyen1505.github.io/eleavator/blog/index.html để kiểm tra. Nếu chưa tới 09:00 giờ Việt Nam, chưa có bài đến hạn; trang blog vẫn có thể trống.
 
