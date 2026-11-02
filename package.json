@@ -1,0 +1,14 @@
+{
+  "name": "aurelia-elevators",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "build": "node build.mjs",
+    "agent:start": "node agent/scheduler.mjs",
+    "agent:once": "node agent/scheduler.mjs --once",
+    "agent:test": "node agent/test.mjs"
+  },
+  "type": "module"
+}

@@ -1,0 +1,75 @@
+name: Daily AI blog and GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # UTC -> Vietnam: 09:00, 11:00, 15:00, 19:00, 20:00
+    - cron: '0 2,4,8,12,13 * * *'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: aurelia-pages-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Restore durable article history
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          git ls-remote --exit-code origin refs/heads/blog-state > "$RUNNER_TEMP/blog-state-ref"
+          status=$?
+          set -e
+          if [ "$status" -eq 0 ]; then
+            git fetch --no-tags origin refs/heads/blog-state
+            git archive FETCH_HEAD agent/output blog | tar -x
+            # Generated content must not pollute the source checkout's index.
+          elif [ "$status" -ne 2 ]; then
+            echo 'Cannot check saved history; refusing to generate duplicate posts.' >&2
+            exit "$status"
+          fi
+      - name: Test agent
+        run: npm run agent:test
+      - name: Generate and automatically publish due posts
+        id: generate
+        if: github.event_name != 'push'
+        env:
+          BLOG_AI_API_KEY: ${{ secrets.BLOG_AI_API_KEY }}
+        run: npm run agent:once
+      - name: Persist history even after a partial generation failure
+        if: always() && steps.generate.outcome != 'skipped'
+        shell: bash
+        run: bash scripts/save-blog-state.sh
+      - name: Build public files only
+        run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
