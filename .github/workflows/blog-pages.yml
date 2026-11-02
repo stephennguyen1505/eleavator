@@ -48,6 +48,7 @@ jobs:
         run: npm run agent:test
       - name: Generate and automatically publish due posts
         id: generate
+        if: vars.ENABLE_AI_GENERATION == 'true'
         env:
           BLOG_AI_API_KEY: ${{ secrets.BLOG_AI_API_KEY }}
         run: npm run agent:once

@@ -1,4 +1,14 @@
-# Kích hoạt đăng bài trên GitHub Pages
+# Blog trên GitHub Pages
+
+Website đã có mục Blog ở thanh điều hướng và khu vực bài viết trên trang chủ. Ba bài tư vấn tĩnh về thang máy gia đình, biệt thự villa và khách sạn nằm trong `content/posts.json`; chỉnh nội dung tại đây rồi push lên main để triển khai. Không cần API cho những bài này.
+
+**Chế độ hiện tại: không gọi API.** Workflow vẫn build và triển khai website trên push hoặc lịch, nhưng chỉ tạo bài AI khi repository variable `ENABLE_AI_GENERATION` bằng `true`. Giữ biến này chưa đặt hoặc `false` để dùng nội dung soạn sẵn mà không phát sinh phí API. Ba bài hiện tại được đăng ngay, chưa phải một hàng chờ bài theo lịch.
+
+Nếu sau này muốn bật lại AI: bổ sung số dư API, kiểm tra secret `BLOG_AI_API_KEY`, sau đó vào Settings → Secrets and variables → Actions → Variables để thêm `ENABLE_AI_GENERATION=true`.
+
+---
+
+# Hướng dẫn chế độ AI tùy chọn
 
 Website: https://stephennguyen1505.github.io/eleavator/
 

@@ -51,10 +51,10 @@ test('Blog chỉ xuất bài đã duyệt và escape HTML từ nội dung AI',as
  try{
   const response=()=>({ok:true,json:async()=>({choices:[{finish_reason:'stop',message:{content:JSON.stringify({...article,title:'<script>alert(1)</script>'})}}]})});
   const result=await run({outputDirectory,now:new Date('2026-11-02T03:00:00Z'),apiKey:'test-only',fetchImpl:async()=>response()});
-  assert.equal(await exportBlog({outputDirectory,blogDirectory}),0);
+  assert.equal(await exportBlog({outputDirectory,blogDirectory,includeCurated:false}),0);
   assert.deepEqual(await readdir(blogDirectory),['index.html']);
-  await approve(result.id,{outputDirectory,blogDirectory});
-  assert.equal(await exportBlog({outputDirectory,blogDirectory}),1);
+  await approve(result.id,{outputDirectory,blogDirectory,includeCurated:false});
+  assert.equal(await exportBlog({outputDirectory,blogDirectory,includeCurated:false}),1);
   const page=await readFile(path.join(blogDirectory,result.id+'.html'),'utf8');
   assert.ok(page.includes('&lt;script&gt;'));assert.ok(!page.includes('<script>'));
   await assert.rejects(approve('../bad',{outputDirectory,blogDirectory}),/ID/);
@@ -64,7 +64,7 @@ test('Blog chỉ xuất bài đã duyệt và escape HTML từ nội dung AI',as
 test('Tự động xuất đủ 5 bài lên blog và dist, không cần thao tác duyệt',async()=>{
  const {tick}=await import('./automation.mjs');
  const root=await mkdtemp(path.join(tmpdir(),'blog-auto-'));let calls=0;
- const options={outputDirectory:path.join(root,'output'),blogDirectory:path.join(root,'blog'),distDirectory:path.join(root,'dist'),now:new Date('2026-11-02T14:00:00Z'),apiKey:'test-only',fetchImpl:async()=>{calls++;return aiResponse()}};
+ const options={includeCurated:false,outputDirectory:path.join(root,'output'),blogDirectory:path.join(root,'blog'),distDirectory:path.join(root,'dist'),now:new Date('2026-11-02T14:00:00Z'),apiKey:'test-only',fetchImpl:async()=>{calls++;return aiResponse()}};
  try{
   const result=await tick(options);assert.equal(result.mode,'automatic');
   assert.equal(result.results.filter(r=>r.status==='published-to-local-blog').length,5);
@@ -78,7 +78,7 @@ test('Tự động xuất đủ 5 bài lên blog và dist, không cần thao tá
 test('Tiếp tục xuất bản sau lỗi xuất HTML mà không tốn thêm lượt gọi AI',async()=>{
  const {tick}=await import('./automation.mjs');const {approve}=await import('./publish.mjs');
  const root=await mkdtemp(path.join(tmpdir(),'blog-recovery-'));let calls=0;
- const options={outputDirectory:path.join(root,'output'),blogDirectory:path.join(root,'blog'),distDirectory:path.join(root,'dist'),now:new Date('2026-11-02T03:00:00Z'),apiKey:'test-only',fetchImpl:async()=>{calls++;return aiResponse()}};
+ const options={includeCurated:false,outputDirectory:path.join(root,'output'),blogDirectory:path.join(root,'blog'),distDirectory:path.join(root,'dist'),now:new Date('2026-11-02T03:00:00Z'),apiKey:'test-only',fetchImpl:async()=>{calls++;return aiResponse()}};
  try{
   await assert.rejects(tick({...options,approveImpl:async(id,settings)=>{await approve(id,settings);throw Error('Simulated interrupted export')}}),/interrupted/);
   const recovered=await tick(options);assert.equal(calls,1);

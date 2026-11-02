@@ -1,3 +1,5 @@
+> Website hiện dùng nội dung tĩnh ở `content/posts.json`. Workflow bỏ qua tạo bài AI trừ khi repository variable `ENABLE_AI_GENERATION=true`. Các hướng dẫn API bên dưới chỉ áp dụng khi bật lại chế độ AI; không cần API để hiển thị ba bài blog đã soạn sẵn.
+
 # Agent tự động đăng blog Aurelia
 
 **Cấu hình hiện tại: tự động đăng, không cần duyệt bài.**

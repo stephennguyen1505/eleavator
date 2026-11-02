@@ -1,4 +1,6 @@
+import {exportBlog} from './agent/publish.mjs';
 import {mkdir,copyFile,cp} from 'node:fs/promises';
+await exportBlog();
 await mkdir('dist',{recursive:true});
 for(const file of ['index.html','style.css','app.js'])await copyFile(file,`dist/${file}`);
 await cp('blog','dist/blog',{recursive:true});

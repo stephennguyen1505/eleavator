@@ -5,7 +5,7 @@ import {run,dayKey} from './run.mjs';
 import {approve,exportBlog} from './publish.mjs';
 
 const directory=path.dirname(fileURLToPath(import.meta.url));
-export async function tick({configPath=path.join(directory,'config.json'),outputDirectory=path.join(directory,'output'),blogDirectory=path.join(directory,'..','blog'),distDirectory=path.join(directory,'..','dist'),now=new Date(),apiKey=process.env.BLOG_AI_API_KEY,fetchImpl=fetch,exportImpl=exportBlog,approveImpl=approve}={}){
+export async function tick({configPath=path.join(directory,'config.json'),outputDirectory=path.join(directory,'output'),blogDirectory=path.join(directory,'..','blog'),distDirectory=path.join(directory,'..','dist'),now=new Date(),apiKey=process.env.BLOG_AI_API_KEY,fetchImpl=fetch,exportImpl=exportBlog,approveImpl=approve,includeCurated=true}={}){
  const config=JSON.parse(await readFile(configPath,'utf8'));
  const options={configPath,outputDirectory,now,apiKey,fetchImpl};
  const results=[];
@@ -17,12 +17,12 @@ export async function tick({configPath=path.join(directory,'config.json'),output
    if(!file.endsWith('.json'))continue;
    const post=JSON.parse(await readFile(path.join(outputDirectory,file),'utf8'));
    if(post.status==='draft'&&post.publicationMode==='automatic'&&post.day<=dayKey(now,config.timezone)){
-    await approveImpl(post.id,{outputDirectory,blogDirectory,automatic:true});
+    await approveImpl(post.id,{outputDirectory,blogDirectory,automatic:true,includeCurated});
     results.push({status:'published-to-local-blog',id:post.id});
    }
   }
   // Always reconcile exports, including a crash after approval but before output is written.
-  await exportImpl({outputDirectory,blogDirectory});
+  await exportImpl({outputDirectory,blogDirectory,includeCurated});
   await mkdir(distDirectory,{recursive:true});
   await cp(blogDirectory,path.join(distDirectory,'blog'),{recursive:true});
  }
